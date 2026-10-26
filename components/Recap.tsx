@@ -146,19 +146,25 @@ function Story({ data }: { data: RecapData }) {
           <Slide data={data} />
         </motion.div>
       </AnimatePresence>
-      <div className={`absolute right-6 z-30 flex gap-2 ${i === SLIDES.length - 1 ? "top-14" : "top-[76px]"}`}>
+      <div className={`absolute right-6 z-30 flex items-center rounded-full bg-white/[0.07] p-0.5 ring-1 ring-white/10 backdrop-blur-md ${i === SLIDES.length - 1 ? "top-14" : "top-[74px]"}`}>
         <IconButton label="Save image" disabled={busy} primary onClick={() => save([i])}>
           <path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14" />
         </IconButton>
         {canShare && (
+          <>
+          <span className="h-3.5 w-px bg-white/15" />
           <IconButton label="Share" disabled={busy} onClick={() => save([i], true)}>
             <path d="M12 15V4m0 0L8 8m4-4l4 4M6 12v7h12v-7" />
           </IconButton>
+          </>
         )}
         {i === SLIDES.length - 1 && (
+          <>
+          <span className="h-3.5 w-px bg-white/15" />
           <IconButton label="Save all slides" disabled={busy} onClick={() => save(SLIDES.map((_, n) => n))}>
             <path d="M12 3v9m0 0l-3-3m3 3l3-3M4 15l8 4 8-4M4 19l8 4 8-4" transform="translate(0 -2)" />
           </IconButton>
+          </>
         )}
       </div>
       {Capture && (
@@ -198,9 +204,9 @@ function IconButton({ label, onClick, disabled, primary, children }: { label: st
       title={label}
       disabled={disabled}
       onClick={onClick}
-      className={`flex h-9 w-9 items-center justify-center rounded-full ring-1 ring-white/15 transition active:scale-95 disabled:animate-pulse disabled:opacity-50 ${primary ? "bg-lime text-ink" : "bg-white/10 text-white"}`}
+      className={`flex h-8 w-9 items-center justify-center rounded-full transition hover:bg-white/10 active:scale-95 disabled:animate-pulse disabled:opacity-50 ${primary ? "text-lime" : "text-zinc-200"}`}
     >
-      <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox="0 0 24 24" className="h-[17px] w-[17px]" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
         {children}
       </svg>
     </button>
