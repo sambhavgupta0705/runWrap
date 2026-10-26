@@ -1,69 +1,88 @@
-import Image from "next/image";
+import { Suspense } from "react";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/session";
+import { SampleCards } from "@/components/landing/SampleCards";
 
-export default function Home() {
+type Params = Promise<{ error?: string; deleted?: string }>;
+
+const ERRORS: Record<string, string> = {
+  denied: "Strava login was cancelled.",
+  scope: "Please keep “View data about your activities” ticked, we need it to build your recap.",
+  state: "Login session expired. Please try again.",
+  exchange: "Couldn't complete login with Strava. Please try again.",
+};
+
+const STEPS = [
+  ["01", "Connect", "Log in with Strava. We only ask to read your activities."],
+  ["02", "We crunch your year", "Distance, routes, best efforts, streaks, and when you like to run."],
+  ["03", "Watch and share", "Swipe through your story, then save any card for Instagram."],
+];
+
+const FEATURES = ["Total distance, compared to real journeys", "Your most-run routes", "Best 5K, 10K, 21K, 30K and 42K", "Year calendar and weekly streak", "Your runner type", "Share-ready 9:16 cards"];
+
+// Redirects logged-in users to their recap and shows login errors.
+async function Gate({ searchParams }: { searchParams: Params }) {
+  if (await getSession()) redirect("/recap");
+  const { error, deleted } = await searchParams;
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+    <>
+      {deleted && <p className="mb-4 text-lime">Your data has been deleted and runWrap is disconnected from Strava.</p>}
+      {error && <p className="mb-4 text-red-400">{ERRORS[error] ?? "Something went wrong."}</p>}
+    </>
+  );
+}
+
+export default function Home({ searchParams }: { searchParams: Params }) {
+  return (
+    <div className="relative overflow-hidden">
+      <div className="pointer-events-none absolute -left-40 -top-40 h-[480px] w-[480px] rounded-full bg-lime/10 blur-3xl" />
+
+      <nav className="relative mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
+        <span className="text-xl font-extrabold tracking-tight">run<span className="text-lime">Wrap</span></span>
+        <Link href="/privacy" className="font-mono text-xs text-zinc-400 hover:text-white">Privacy</Link>
+      </nav>
+
+      <main className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 pb-20 pt-8 md:grid-cols-2 md:pt-16">
+        <section>
+          <p className="font-mono text-xs uppercase tracking-[0.25em] text-lime">Your running year, wrapped</p>
+          <h1 className="mt-4 text-5xl font-extrabold leading-[1.02] tracking-tight sm:text-7xl">
+            Every kilometre,<br />
+            <span className="bg-gradient-to-r from-lime to-lime/50 bg-clip-text text-transparent">told as a story.</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mt-6 max-w-md text-lg text-zinc-400">
+            Connect Strava and get a swipeable recap of your year: distance, favourite routes, best efforts and the kind of runner you really are.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+          <div className="mt-8">
+            <Suspense><Gate searchParams={searchParams} /></Suspense>
+            <a href="/api/auth/login" className="inline-flex items-center gap-2 rounded-xl bg-[#FC4C02] px-7 py-4 text-lg font-bold text-white shadow-lg shadow-[#FC4C02]/20 transition hover:-translate-y-0.5 hover:opacity-95">
+              Connect with Strava <span aria-hidden>→</span>
+            </a>
+            <p className="mt-3 max-w-sm text-xs text-zinc-500">Read-only. Private (“Only You”) activities aren&apos;t included. Nothing is stored on our servers.</p>
+          </div>
+        </section>
+        <SampleCards />
       </main>
+
+      <section className="relative mx-auto max-w-6xl px-6 pb-16">
+        <div className="grid gap-4 md:grid-cols-3">
+          {STEPS.map(([n, t, d]) => (
+            <div key={n} className="rounded-2xl bg-white/[0.05] p-6 ring-1 ring-white/10">
+              <p className="font-mono text-sm text-lime">{n}</p>
+              <p className="mt-3 text-xl font-bold">{t}</p>
+              <p className="mt-2 text-sm text-zinc-400">{d}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-10 flex flex-wrap gap-2">
+          {FEATURES.map((f) => <span key={f} className="rounded-full bg-white/[0.06] px-4 py-2 text-sm text-zinc-300 ring-1 ring-white/10">{f}</span>)}
+        </div>
+      </section>
+
+      <footer className="relative mx-auto flex max-w-6xl items-center justify-between border-t border-white/10 px-6 py-6 font-mono text-xs text-zinc-500">
+        <span>runWrap</span>
+        <span>Powered by Strava</span>
+      </footer>
     </div>
   );
 }
