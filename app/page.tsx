@@ -56,8 +56,9 @@ export default function Home({ searchParams }: { searchParams: Params }) {
           </p>
           <div className="mt-8">
             <Suspense><Gate searchParams={searchParams} /></Suspense>
-            <a href="/api/auth/login" className="inline-flex items-center gap-2 rounded-xl bg-[#FC4C02] px-7 py-4 text-lg font-bold text-white shadow-lg shadow-[#FC4C02]/20 transition hover:-translate-y-0.5 hover:opacity-95">
-              Connect with Strava <span aria-hidden>→</span>
+            <a href="/api/auth/login" className="inline-block transition hover:-translate-y-0.5 hover:opacity-95">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/strava/connect-with-strava-orange.svg" alt="Connect with Strava" width={237} height={48} className="h-12 w-auto" />
             </a>
             <p className="mt-3 max-w-sm text-xs text-zinc-500">Read-only. Private (“Only You”) activities aren&apos;t included. Nothing is stored on our servers.</p>
           </div>
