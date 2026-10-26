@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PoweredByStrava } from "@/components/PoweredByStrava";
 
 export const metadata: Metadata = { title: "Privacy · runWrap" };
 
@@ -33,7 +34,7 @@ export default function Privacy() {
         and immediately clear anything we hold for you.
       </Section>
       <Section title="Contact">Questions? Email <a href="mailto:sambhavwork75@gmail.com" className="text-lime underline">sambhavwork75@gmail.com</a>.</Section>
-      <p className="mt-10 font-mono text-xs text-zinc-600">Powered by Strava</p>
+      <PoweredByStrava className="mt-10 h-4" />
     </main>
   );
 }

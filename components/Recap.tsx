@@ -1,6 +1,7 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
 import { toPng } from "html-to-image";
+import { PoweredByStrava } from "./PoweredByStrava";
 import { SlideHeader } from "./SlideHeader";
 import { StaticContext } from "./StaticContext";
 import { useRouter } from "next/navigation";
@@ -54,9 +55,9 @@ function Shell({ children }: { children: React.ReactNode }) {
     <main className="flex min-h-dvh items-center justify-center bg-black">
       <div className="relative flex h-dvh max-h-[900px] w-full max-w-[calc(100dvh*9/16)] flex-col overflow-hidden bg-ink sm:rounded-3xl">
         {children}
-        <footer className="pointer-events-none absolute inset-x-6 bottom-3 flex justify-between font-mono text-[10px] text-zinc-500">
+        <footer className="pointer-events-none absolute inset-x-6 bottom-3 flex items-center justify-between font-mono text-[10px] text-zinc-500">
           <span>runWrap</span>
-          <span>Powered by Strava</span>
+          <PoweredByStrava className="h-3.5" />
         </footer>
       </div>
     </main>
@@ -164,9 +165,9 @@ function Story({ data }: { data: RecapData }) {
               <div className={`h-full ${captureIdx !== SLIDES.length - 1 ? "pt-14" : ""}`}>
                 <Capture data={data} />
               </div>
-              <footer className="absolute inset-x-6 bottom-6 flex justify-between font-mono text-[10px] text-zinc-500">
+              <footer className="absolute inset-x-6 bottom-6 flex items-center justify-between font-mono text-[10px] text-zinc-500">
                 <span>runWrap</span>
-                <span>Powered by Strava</span>
+                <PoweredByStrava className="h-3.5" />
               </footer>
             </div>
           </StaticContext.Provider>

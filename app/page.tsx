@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
+import { PoweredByStrava } from "@/components/PoweredByStrava";
 import { SampleCards } from "@/components/landing/SampleCards";
 
 type Params = Promise<{ error?: string; deleted?: string }>;
@@ -81,7 +82,7 @@ export default function Home({ searchParams }: { searchParams: Params }) {
 
       <footer className="relative mx-auto flex max-w-6xl items-center justify-between border-t border-white/10 px-6 py-6 font-mono text-xs text-zinc-500">
         <span>runWrap</span>
-        <span>Powered by Strava</span>
+        <PoweredByStrava className="h-4" />
       </footer>
     </div>
   );
