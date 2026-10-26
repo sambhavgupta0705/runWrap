@@ -146,15 +146,19 @@ function Story({ data }: { data: RecapData }) {
           <Slide data={data} />
         </motion.div>
       </AnimatePresence>
-      <div className="absolute inset-x-0 bottom-9 z-30 flex justify-center gap-2 font-mono text-xs">
-        <button disabled={busy} onClick={() => save([i])} className="rounded-full bg-lime px-4 py-2 font-bold text-ink disabled:opacity-50">
-          {busy ? "Preparing…" : "Save image"}
-        </button>
+      <div className={`absolute right-6 z-30 flex gap-2 ${i === SLIDES.length - 1 ? "top-14" : "top-[76px]"}`}>
+        <IconButton label="Save image" disabled={busy} primary onClick={() => save([i])}>
+          <path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14" />
+        </IconButton>
         {canShare && (
-          <button disabled={busy} onClick={() => save([i], true)} className="rounded-full bg-white/10 px-4 py-2 disabled:opacity-50">Share</button>
+          <IconButton label="Share" disabled={busy} onClick={() => save([i], true)}>
+            <path d="M12 15V4m0 0L8 8m4-4l4 4M6 12v7h12v-7" />
+          </IconButton>
         )}
         {i === SLIDES.length - 1 && (
-          <button disabled={busy} onClick={() => save(SLIDES.map((_, n) => n))} className="rounded-full bg-white/10 px-4 py-2 disabled:opacity-50">Save all</button>
+          <IconButton label="Save all slides" disabled={busy} onClick={() => save(SLIDES.map((_, n) => n))}>
+            <path d="M12 3v9m0 0l-3-3m3 3l3-3M4 15l8 4 8-4M4 19l8 4 8-4" transform="translate(0 -2)" />
+          </IconButton>
         )}
       </div>
       {Capture && (
@@ -184,5 +188,21 @@ function Story({ data }: { data: RecapData }) {
       <button aria-label="Previous" className="absolute inset-y-12 left-0 z-10 w-1/3" onClick={() => go(-1)} />
       {i < SLIDES.length - 1 && <button aria-label="Next" className="absolute inset-y-12 right-0 z-10 w-2/3" onClick={() => go(1)} />}
     </div>
+  );
+}
+
+function IconButton({ label, onClick, disabled, primary, children }: { label: string; onClick: () => void; disabled: boolean; primary?: boolean; children: React.ReactNode }) {
+  return (
+    <button
+      aria-label={label}
+      title={label}
+      disabled={disabled}
+      onClick={onClick}
+      className={`flex h-9 w-9 items-center justify-center rounded-full ring-1 ring-white/15 transition active:scale-95 disabled:animate-pulse disabled:opacity-50 ${primary ? "bg-lime text-ink" : "bg-white/10 text-white"}`}
+    >
+      <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        {children}
+      </svg>
+    </button>
   );
 }
