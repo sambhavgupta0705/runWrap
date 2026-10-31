@@ -2,6 +2,7 @@
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import { toPng } from "html-to-image";
 import { SlideFooter, SlideFrame } from "./SlideFrame";
+import { THEMES } from "@/lib/theme";
 import { SlideHeader } from "./SlideHeader";
 import { StaticContext } from "./StaticContext";
 import { useRouter } from "next/navigation";
@@ -83,6 +84,21 @@ function Story({ data }: { data: RecapData }) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [go]);
+
+  // Safari tints its top and bottom bars from theme-color and the page background.
+  useEffect(() => {
+    const color = THEMES[i].bg;
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    const prev = [meta?.content, document.documentElement.style.background];
+    if (meta) meta.content = color;
+    document.documentElement.style.background = color;
+    document.body.style.background = color;
+    return () => {
+      if (meta && prev[0]) meta.content = prev[0];
+      document.documentElement.style.background = prev[1] ?? "";
+      document.body.style.background = "";
+    };
+  }, [i]);
 
   const [captureIdx, setCaptureIdx] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);

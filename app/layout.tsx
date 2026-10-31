@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Big_Shoulders, Schibsted_Grotesk } from "next/font/google";
 import "./globals.css";
 
@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   openGraph: { title: "runWrap", description: "Your running year in seven slides.", type: "website" },
   twitter: { card: "summary_large_image" },
 };
+
+export const viewport: Viewport = { themeColor: "#1E3BFF", viewportFit: "cover" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
