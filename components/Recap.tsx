@@ -153,7 +153,7 @@ function Story({ data }: { data: RecapData }) {
   return (
     <SlideFrame
       index={i}
-      className="absolute inset-0 select-none"
+      className="absolute! inset-0 select-none"
     >
       <div
         className="h-full"
