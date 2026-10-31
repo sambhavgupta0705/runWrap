@@ -6,10 +6,10 @@ export const metadata: Metadata = { title: "Privacy · runWrap" };
 
 export default function Privacy() {
   return (
-    <main className="mx-auto max-w-2xl px-6 py-16 leading-relaxed text-zinc-300">
-      <Link href="/" className="font-mono text-sm text-lime">← runWrap</Link>
-      <h1 className="mt-6 text-4xl font-bold text-white">Privacy policy</h1>
-      <p className="mt-2 font-mono text-xs text-zinc-500">Last updated 26 October 2026</p>
+    <main className="mx-auto min-h-screen w-full max-w-2xl bg-white px-6 py-14 text-lg leading-relaxed text-black">
+      <Link href="/" className="font-display text-2xl font-black underline underline-offset-4">runWrap</Link>
+      <h1 className="mt-8 font-display text-7xl font-black leading-[0.85]">Privacy policy</h1>
+      <p className="mt-3 opacity-70">Last updated 26 October 2026</p>
 
       <Section title="What we read from Strava">
         When you connect, we ask for read access to your profile (name, photo) and your activities
@@ -33,16 +33,16 @@ export default function Privacy() {
         Strava under Settings → My Apps. When you deauthorize us on Strava, we receive a notification
         and immediately clear anything we hold for you.
       </Section>
-      <Section title="Contact">Questions? Email <a href="mailto:sambhavwork75@gmail.com" className="text-lime underline">sambhavwork75@gmail.com</a>.</Section>
-      <PoweredByStrava className="mt-10 h-4" />
+      <Section title="Contact">Questions? Email <a href="mailto:sambhavwork75@gmail.com" className="underline underline-offset-4">sambhavwork75@gmail.com</a>.</Section>
+      <PoweredByStrava className="mt-12 h-4" tone="black" />
     </main>
   );
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="mt-8">
-      <h2 className="text-xl font-semibold text-white">{title}</h2>
+    <section className="mt-9">
+      <h2 className="font-display text-3xl font-extrabold leading-none">{title}</h2>
       <p className="mt-2">{children}</p>
     </section>
   );

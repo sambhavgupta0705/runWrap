@@ -1,7 +1,7 @@
 import polyline from "@mapbox/polyline";
 
 /** Draws an encoded polyline as an SVG path, scaled to fit (no map tiles). */
-export function RouteSvg({ encoded, className, stroke = "#d4ff3f", width = 3 }: { encoded: string | null; className?: string; stroke?: string; width?: number }) {
+export function RouteSvg({ encoded, className, stroke = "currentColor", width = 3 }: { encoded: string | null; className?: string; stroke?: string; width?: number }) {
   if (!encoded) return <div className={className} />;
   const pts = polyline.decode(encoded); // [lat, lng][]
   if (pts.length < 2) return <div className={className} />;

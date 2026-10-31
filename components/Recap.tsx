@@ -1,7 +1,7 @@
 "use client";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import { toPng } from "html-to-image";
-import { PoweredByStrava } from "./PoweredByStrava";
+import { SlideFooter, SlideFrame } from "./SlideFrame";
 import { SlideHeader } from "./SlideHeader";
 import { StaticContext } from "./StaticContext";
 import { useRouter } from "next/navigation";
@@ -24,6 +24,7 @@ const PIXEL_RATIO = 1080 / CARD_W;
 
 const frame = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
 
+
 export function Recap() {
   const [data, setData] = useState<RecapData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -45,22 +46,25 @@ export function Recap() {
       .catch(() => setEfforts(null));
   }, [router]);
 
-  if (error) return <Shell><p className="m-auto px-8 text-center text-red-400">{error}</p></Shell>;
-  if (!data) return <Shell><p className="m-auto animate-pulse text-zinc-400">Crunching your year...</p></Shell>;
+  if (error) return <Shell footer><Message>{error}</Message></Shell>;
+  if (!data) return <Shell footer><Message>Reading your runs from Strava…</Message></Shell>;
   return <Shell><Story data={{ ...data, efforts }} /></Shell>;
 }
 
-function Shell({ children }: { children: React.ReactNode }) {
+function Message({ children }: { children: React.ReactNode }) {
+  return <p className="m-auto max-w-[18ch] px-6 text-center font-display text-4xl font-extrabold leading-none">{children}</p>;
+}
+
+function Shell({ children, footer }: { children: React.ReactNode; footer?: boolean }) {
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-black">
-      <div className="relative flex h-dvh max-h-[900px] w-full max-w-[calc(100dvh*9/16)] flex-col overflow-hidden bg-ink sm:rounded-3xl">
-        {children}
-        <footer className="pointer-events-none absolute inset-x-6 bottom-3 flex items-center justify-between font-mono text-[10px] text-zinc-500">
-          <span>runWrap</span>
-          <PoweredByStrava className="h-3.5" />
-        </footer>
-      </div>
-    </main>
+    <MotionConfig reducedMotion="user">
+      <main className="flex min-h-dvh items-center justify-center bg-black">
+        <SlideFrame index={0} className="flex h-dvh max-h-[900px] w-full max-w-[calc(100dvh*9/16)] flex-col sm:rounded-2xl">
+          {children}
+          {footer && <SlideFooter index={0} />}
+        </SlideFrame>
+      </main>
+    </MotionConfig>
   );
 }
 
@@ -122,91 +126,103 @@ function Story({ data }: { data: RecapData }) {
   }, [render, data.year]);
 
   const canShare = typeof navigator !== "undefined" && !!navigator.canShare;
+  const last = i === SLIDES.length - 1;
   const Slide = SLIDES[i];
   const Capture = captureIdx !== null ? SLIDES[captureIdx] : null;
-  return (
-    <div
-      className="relative h-full select-none"
-      onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
-      onTouchEnd={(e) => {
-        const dx = e.changedTouches[0].clientX - (touchX.current ?? 0);
-        if (Math.abs(dx) > 50) { go(dx < 0 ? 1 : -1); touchX.current = -1e9; }
-      }}
-    >
-      <div className="absolute inset-x-3 top-3 z-20 flex gap-1">
-        {SLIDES.map((_, n) => (
-          <div key={n} className="h-1 flex-1 rounded-full bg-white/20">
-            <div className={`h-full rounded-full bg-lime transition-all duration-300 ${n <= i ? "w-full" : "w-0"}`} />
-          </div>
-        ))}
-      </div>
-      {i < SLIDES.length - 1 && <SlideHeader data={data} page={`${String(i + 1).padStart(2, "0")} / ${String(SLIDES.length).padStart(2, "0")}`} />}
-      <AnimatePresence mode="wait">
-        <motion.div key={i} className={`h-full ${i < SLIDES.length - 1 ? "pt-16" : ""}`} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
-          <Slide data={data} />
-        </motion.div>
-      </AnimatePresence>
-      <div className={`absolute right-6 z-30 flex items-center rounded-full bg-white/[0.07] p-0.5 ring-1 ring-white/10 backdrop-blur-md ${i === SLIDES.length - 1 ? "top-14" : "top-[74px]"}`}>
-        <IconButton label="Save image" disabled={busy} primary onClick={() => save([i])}>
-          <path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14" />
+
+  const actions = (
+    <>
+      <IconButton label="Save image" disabled={busy} onClick={() => save([i])}>
+        <path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14" />
+      </IconButton>
+      {canShare && (
+        <IconButton label="Share" disabled={busy} onClick={() => save([i], true)}>
+          <path d="M12 15V4m0 0L8 8m4-4l4 4M6 12v7h12v-7" />
         </IconButton>
-        {canShare && (
-          <>
-          <span className="h-3.5 w-px bg-white/15" />
-          <IconButton label="Share" disabled={busy} onClick={() => save([i], true)}>
-            <path d="M12 15V4m0 0L8 8m4-4l4 4M6 12v7h12v-7" />
-          </IconButton>
-          </>
+      )}
+      {last && (
+        <IconButton label="Save all slides" disabled={busy} onClick={() => save(SLIDES.map((_, n) => n))}>
+          <path d="M12 3v9m0 0l-3-3m3 3l3-3M4 15l8 4 8-4M4 19l8 4 8-4" transform="translate(0 -2)" />
+        </IconButton>
+      )}
+    </>
+  );
+
+  return (
+    <SlideFrame
+      index={i}
+      className="absolute inset-0 select-none"
+    >
+      <div
+        className="h-full"
+        onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
+        onTouchEnd={(e) => {
+          const dx = e.changedTouches[0].clientX - (touchX.current ?? 0);
+          if (Math.abs(dx) > 50) { go(dx < 0 ? 1 : -1); touchX.current = -1e9; }
+        }}
+      >
+        <div className="absolute inset-x-3 top-3 z-20 flex gap-1" role="progressbar" aria-valuemin={1} aria-valuemax={SLIDES.length} aria-valuenow={i + 1}>
+          {SLIDES.map((_, n) => (
+            <div key={n} className="h-[3px] flex-1 bg-current/25">
+              <div className={`h-full bg-current transition-all duration-300 ${n <= i ? "w-full" : "w-0"}`} />
+            </div>
+          ))}
+        </div>
+
+        {!last ? (
+          <SlideHeader data={data} page={`${i + 1} of ${SLIDES.length}`} actions={actions} />
+        ) : (
+          <div className="absolute right-4 top-7 z-10 flex items-center">{actions}</div>
         )}
-        {i === SLIDES.length - 1 && (
-          <>
-          <span className="h-3.5 w-px bg-white/15" />
-          <IconButton label="Save all slides" disabled={busy} onClick={() => save(SLIDES.map((_, n) => n))}>
-            <path d="M12 3v9m0 0l-3-3m3 3l3-3M4 15l8 4 8-4M4 19l8 4 8-4" transform="translate(0 -2)" />
-          </IconButton>
-          </>
+
+        <AnimatePresence mode="wait">
+          <motion.div key={i} className={`h-full ${last ? "pt-24" : "pt-16"}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
+            <Slide data={data} />
+          </motion.div>
+        </AnimatePresence>
+
+        {last && (
+          <form action="/api/auth/logout" method="post" className="absolute left-6 top-8 z-30">
+            <button className="text-sm underline underline-offset-2">Log out</button>
+          </form>
         )}
+
+        <SlideFooter index={i} />
+
+        {/* Tap zones: left third goes back, the rest goes forward. */}
+        <button aria-label="Previous slide" className="absolute inset-y-24 left-0 z-10 w-1/3" onClick={() => go(-1)} />
+        {!last && <button aria-label="Next slide" className="absolute inset-y-24 right-0 z-10 w-2/3" onClick={() => go(1)} />}
       </div>
-      {Capture && (
+
+      {Capture && captureIdx !== null && (
         <div style={{ position: "fixed", left: -10000, top: 0 }} aria-hidden>
           <StaticContext.Provider value>
-            <div ref={cardRef} className="relative overflow-hidden bg-ink text-[#f4f4f0]" style={{ width: CARD_W, height: CARD_H }}>
+            <div ref={cardRef} style={{ width: CARD_W, height: CARD_H }}>
+            <SlideFrame index={captureIdx} className="h-full w-full">
               {captureIdx !== SLIDES.length - 1 && <SlideHeader data={data} className="top-6" />}
-              <div className={`h-full ${captureIdx !== SLIDES.length - 1 ? "pt-14" : ""}`}>
+              <div className="h-full pt-14">
                 <Capture data={data} />
               </div>
-              <footer className="absolute inset-x-6 bottom-6 flex items-center justify-between font-mono text-[10px] text-zinc-500">
-                <span>runWrap</span>
-                <PoweredByStrava className="h-3.5" />
-              </footer>
+              <SlideFooter index={captureIdx} className="bottom-5" />
+            </SlideFrame>
             </div>
           </StaticContext.Provider>
         </div>
       )}
-      {i === SLIDES.length - 1 && (
-        <div className="absolute right-4 top-8 z-30 flex flex-col items-end gap-1 text-xs text-zinc-500">
-          <form action="/api/auth/logout" method="post">
-            <button className="underline">Log out</button>
-          </form>
-        </div>
-      )}
-      {/* Tap zones: left third = back, rest = forward. Kept below the summary's logout button. */}
-      <button aria-label="Previous" className="absolute inset-y-12 left-0 z-10 w-1/3" onClick={() => go(-1)} />
-      {i < SLIDES.length - 1 && <button aria-label="Next" className="absolute inset-y-12 right-0 z-10 w-2/3" onClick={() => go(1)} />}
-    </div>
+    </SlideFrame>
   );
 }
 
-function IconButton({ label, onClick, disabled, primary, children }: { label: string; onClick: () => void; disabled: boolean; primary?: boolean; children: React.ReactNode }) {
+function IconButton({ label, onClick, disabled, children }: { label: string; onClick: () => void; disabled: boolean; children: React.ReactNode }) {
   return (
     <button
       aria-label={label}
       title={label}
       disabled={disabled}
       onClick={onClick}
-      className={`flex h-8 w-9 items-center justify-center rounded-full transition hover:bg-white/10 active:scale-95 disabled:animate-pulse disabled:opacity-50 ${primary ? "text-lime" : "text-zinc-200"}`}
+      className="flex h-9 w-9 items-center justify-center rounded-full transition hover:bg-current/10 active:scale-95 disabled:opacity-40"
     >
-      <svg viewBox="0 0 24 24" className="h-[17px] w-[17px]" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
         {children}
       </svg>
     </button>

@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, JetBrains_Mono } from "next/font/google";
+import { Big_Shoulders, Schibsted_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const sans = Bricolage_Grotesque({ variable: "--font-sans-src", subsets: ["latin"] });
-const mono = JetBrains_Mono({ variable: "--font-mono-src", subsets: ["latin"] });
+const display = Big_Shoulders({ variable: "--font-display-src", subsets: ["latin"], weight: ["700", "800", "900"] });
+const body = Schibsted_Grotesk({ variable: "--font-body-src", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Running Year Recap",
-  description: "Your running year, as a story.",
+  title: "runWrap",
+  description: "Your running year in seven slides, from your Strava activities.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${sans.variable} ${mono.variable} h-full antialiased`}>
+    <html lang="en" className={`${display.variable} ${body.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

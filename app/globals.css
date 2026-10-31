@@ -1,19 +1,21 @@
 @import "tailwindcss";
 
-:root {
-  --ink: #0b0d0c;
-  --lime: #d4ff3f;
-}
-
 @theme inline {
-  --color-ink: var(--ink);
-  --color-lime: var(--lime);
-  --font-sans: var(--font-sans-src);
-  --font-mono: var(--font-mono-src);
+  --font-display: var(--font-display-src), Impact, sans-serif;
+  --font-sans: var(--font-body-src), system-ui, sans-serif;
 }
 
 body {
-  background: var(--ink);
-  color: #f4f4f0;
-  font-family: var(--font-sans-src), system-ui, sans-serif;
+  background: #1e3bff;
+  color: #fff;
+  font-family: var(--font-body-src), system-ui, sans-serif;
+}
+
+:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
 }

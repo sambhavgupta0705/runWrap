@@ -1,8 +1,8 @@
 "use client";
 import { motion } from "framer-motion";
+import { useStatic } from "../StaticContext";
 import { MONTHS, MONTHS_LONG, duration } from "@/lib/format";
 import { PERSONAS } from "@/lib/runnerTypes";
-import { useStatic } from "../StaticContext";
 import type { RecapData } from "./types";
 
 export function MonthsSlide({ data }: { data: RecapData }) {
@@ -10,50 +10,50 @@ export function MonthsSlide({ data }: { data: RecapData }) {
   const { monthlyKm, busiestMonth, runnerType, runnerTypeRuns, totalHours } = data.time;
   const persona = runnerType ? PERSONAS[runnerType] : null;
   const max = Math.max(...monthlyKm, 1);
+
   return (
-    <div className="flex h-full flex-col justify-center gap-6 px-8">
-      <p className="font-mono text-sm uppercase tracking-widest text-lime">Month by month</p>
+    <div className="flex h-full flex-col justify-center gap-5 px-6 pb-14">
       {busiestMonth && (
-        <p className="text-2xl font-semibold">
-          {MONTHS_LONG[busiestMonth.month]} was your biggest: {busiestMonth.km.toFixed(0)} km
-          {busiestMonth.pctVsAvg > 1 && <span className="text-lime"> ({Math.round(busiestMonth.pctVsAvg)}% above your average month)</span>}
-        </p>
+        <div>
+          <h2 className="font-display text-5xl font-extrabold leading-[0.9]">{MONTHS_LONG[busiestMonth.month]} was your biggest month</h2>
+          <p className="mt-2 text-lg">
+            {busiestMonth.km.toFixed(0)} km{busiestMonth.pctVsAvg > 1 ? `, ${Math.round(busiestMonth.pctVsAvg)}% above your monthly average` : ""}.
+          </p>
+        </div>
       )}
-      <div className="flex h-48 gap-1.5">
+      <div className="flex h-40 gap-1">
         {monthlyKm.map((km, i) => (
-          <div key={i} className="flex h-full flex-1 flex-col items-center gap-1">
-            <div className="flex w-full flex-1 items-end">
+          <div key={i} className="flex h-full flex-1 flex-col gap-1">
+            <div className="flex flex-1 items-end">
               <motion.div
-                className={`w-full rounded-t ${i === busiestMonth?.month ? "bg-lime" : "bg-white/25"}`}
+                className={`w-full ${i === busiestMonth?.month ? "bg-[var(--accent)]" : "bg-current/35"}`}
                 initial={isStatic ? false : { height: 0 }}
                 animate={{ height: `${Math.max((km / max) * 100, km > 0 ? 2 : 0)}%` }}
-                transition={{ duration: 0.8, delay: i * 0.05 }}
+                transition={{ duration: 0.7, delay: 0.1 + i * 0.04, ease: [0.16, 1, 0.3, 1] }}
               />
             </div>
-            <span className="font-mono text-[9px] text-zinc-500">{MONTHS[i][0]}</span>
+            <span className="text-center text-xs opacity-70" title={MONTHS[i]}>{MONTHS[i][0]}</span>
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-2 font-mono text-sm">
-        <div className="rounded-xl bg-white/5 p-3">
-          <p className="text-[10px] uppercase text-zinc-500">Total time</p>
-          <p>{totalHours.toFixed(1)} h</p>
+      <dl className="grid grid-cols-2 gap-3">
+        <div>
+          <dd className="tnum font-display text-4xl font-extrabold leading-none">{totalHours.toFixed(1)} h</dd>
+          <dt className="mt-1 text-sm opacity-75">on your feet this year</dt>
         </div>
         {busiestMonth && (
-          <div className="rounded-xl bg-white/5 p-3">
-            <p className="text-[10px] uppercase text-zinc-500">{MONTHS_LONG[busiestMonth.month]} time</p>
-            <p>{duration(busiestMonth.seconds)}</p>
+          <div>
+            <dd className="tnum font-display text-4xl font-extrabold leading-none">{duration(busiestMonth.seconds)}</dd>
+            <dt className="mt-1 text-sm opacity-75">in {MONTHS_LONG[busiestMonth.month]}</dt>
           </div>
         )}
-      </div>
-      {persona && runnerType && (
-        <div className="rounded-2xl bg-white/5 p-4">
-          <p className="font-mono text-[10px] uppercase text-zinc-500">{runnerType}</p>
-          <p className="text-2xl font-extrabold text-lime">{persona.title}</p>
-          <p className="mt-2 text-sm text-zinc-300">
+      </dl>
+      {persona && (
+        <div className="border-t-2 border-current pt-3">
+          <p className="font-display text-5xl font-black leading-[0.85] text-[var(--accent)]">{persona.title}</p>
+          <p className="mt-2 text-base leading-snug">
             {runnerTypeRuns} of your {data.totals.runs} runs started {persona.window}. {persona.lines[0]}
           </p>
-          <p className="mt-1 text-sm text-zinc-400">{persona.lines[1]}</p>
         </div>
       )}
     </div>

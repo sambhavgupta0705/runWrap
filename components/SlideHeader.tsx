@@ -1,17 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
 import type { RecapData } from "./slides/types";
 
-export function SlideHeader({ data, page, className = "top-9" }: { data: RecapData; page?: string; className?: string }) {
+export function SlideHeader({ data, page, actions, className = "top-8" }: { data: RecapData; page?: string; actions?: React.ReactNode; className?: string }) {
   return (
     <header className={`absolute inset-x-6 z-10 flex items-center justify-between ${className}`}>
-      <div className="flex items-center gap-2.5">
-        <img src="/api/avatar" alt="" className="h-8 w-8 rounded-full object-cover ring-2 ring-lime" />
-        <div className="leading-tight">
-          <p className="text-sm font-semibold">{data.athlete.firstname}&apos;s {data.year}</p>
-          <p className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">Running recap</p>
-        </div>
+      <div className="flex items-center gap-2">
+        <img src="/api/avatar" alt="" className="h-7 w-7 rounded-full object-cover" />
+        <p className="text-[15px] font-semibold">{data.athlete.firstname}, {data.year}</p>
       </div>
-      {page && <span className="font-mono text-[10px] text-zinc-500">{page}</span>}
+      <div className="flex items-center gap-1">
+        {actions}
+        {page && <span className="tnum ml-1 text-sm opacity-70">{page}</span>}
+      </div>
     </header>
   );
 }
