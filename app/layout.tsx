@@ -6,8 +6,11 @@ const display = Big_Shoulders({ variable: "--font-display-src", subsets: ["latin
 const body = Schibsted_Grotesk({ variable: "--font-body-src", subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://runwrap.vercel.app"),
   title: "runWrap",
-  description: "Your running year in seven slides, from your Strava activities.",
+  description: "Your running year in seven slides, from your Strava activities. Save any slide as a picture for Instagram stories.",
+  openGraph: { title: "runWrap", description: "Your running year in seven slides.", type: "website" },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

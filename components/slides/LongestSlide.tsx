@@ -19,7 +19,7 @@ export function LongestSlide({ data }: { data: RecapData }) {
           <span className="ml-[0.08em] text-[0.3em] text-[var(--accent)]">km</span>
         </p>
         <p className="mt-4 text-xl font-semibold leading-tight">{l.name}</p>
-        <p className="opacity-75">{LONG_DATE.format(new Date(`${l.date}T00:00:00Z`))}</p>
+        <p className="opacity-85">{LONG_DATE.format(new Date(`${l.date}T00:00:00Z`))}</p>
       </div>
       <RouteSvg encoded={l.polyline} className="mx-auto aspect-square max-h-[240px] w-full" width={4} />
       <dl className="grid grid-cols-3 gap-3 border-t-2 border-current pt-3">
@@ -35,7 +35,7 @@ function Fact({ value, label }: { value: string; label: string }) {
   return (
     <div>
       <dd className="font-display text-3xl font-extrabold leading-none">{value}</dd>
-      <dt className="mt-1 text-sm opacity-75">{label}</dt>
+      <dt className="mt-1 text-sm opacity-85">{label}</dt>
     </div>
   );
 }

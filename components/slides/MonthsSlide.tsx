@@ -32,19 +32,19 @@ export function MonthsSlide({ data }: { data: RecapData }) {
                 transition={{ duration: 0.7, delay: 0.1 + i * 0.04, ease: [0.16, 1, 0.3, 1] }}
               />
             </div>
-            <span className="text-center text-xs opacity-70" title={MONTHS[i]}>{MONTHS[i][0]}</span>
+            <span className="text-center text-xs opacity-85" title={MONTHS[i]}>{MONTHS[i][0]}</span>
           </div>
         ))}
       </div>
       <dl className="grid grid-cols-2 gap-3">
         <div>
           <dd className="tnum font-display text-4xl font-extrabold leading-none">{totalHours.toFixed(1)} h</dd>
-          <dt className="mt-1 text-sm opacity-75">on your feet this year</dt>
+          <dt className="mt-1 text-sm opacity-85">on your feet this year</dt>
         </div>
         {busiestMonth && (
           <div>
             <dd className="tnum font-display text-4xl font-extrabold leading-none">{duration(busiestMonth.seconds)}</dd>
-            <dt className="mt-1 text-sm opacity-75">in {MONTHS_LONG[busiestMonth.month]}</dt>
+            <dt className="mt-1 text-sm opacity-85">in {MONTHS_LONG[busiestMonth.month]}</dt>
           </div>
         )}
       </dl>

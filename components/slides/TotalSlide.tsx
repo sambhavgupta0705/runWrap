@@ -27,7 +27,7 @@ export function TotalSlide({ data }: { data: RecapData }) {
             {c.multiple ? `${c.multiple.toFixed(1)} marathons` : `${Math.round(c.percent)}% of a marathon`}
           </p>
           <Track fills={[Math.min(1, c.percent / 100)]} labels={["Start", "42.2 km"]} />
-          {!c.multiple && <p className="mt-3 text-base opacity-80">{c.kmShort.toFixed(1)} km short of the full distance.</p>}
+          {!c.multiple && <p className="mt-3 text-base opacity-85">{c.kmShort.toFixed(1)} km short of the full distance.</p>}
         </div>
       ) : (
         <div>
@@ -35,7 +35,7 @@ export function TotalSlide({ data }: { data: RecapData }) {
             {c.from} to {c.to}, {c.trips.toFixed(1)} times
           </p>
           <Track fills={c.segments} labels={c.segments.length === 1 ? [c.from, c.to] : null} />
-          <p className="mt-3 max-w-[32ch] text-base opacity-80">{c.caption}</p>
+          <p className="mt-3 max-w-[32ch] text-base opacity-85">{c.caption}</p>
         </div>
       )}
     </div>
@@ -57,7 +57,7 @@ function Track({ fills, labels }: { fills: number[]; labels: string[] | null }) 
         ))}
       </div>
       {labels && (
-        <div className="mt-2 flex justify-between text-sm opacity-80">
+        <div className="mt-2 flex justify-between text-sm opacity-85">
           <span>{labels[0]}</span>
           <span>{labels[1]}</span>
         </div>

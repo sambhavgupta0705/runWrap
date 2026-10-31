@@ -9,7 +9,7 @@ export default function Privacy() {
     <main className="mx-auto min-h-screen w-full max-w-2xl bg-white px-6 py-14 text-lg leading-relaxed text-black">
       <Link href="/" className="font-display text-2xl font-black underline underline-offset-4">runWrap</Link>
       <h1 className="mt-8 font-display text-7xl font-black leading-[0.85]">Privacy policy</h1>
-      <p className="mt-3 opacity-70">Last updated 26 October 2026</p>
+      <p className="mt-3 opacity-85">Last updated 26 October 2026</p>
 
       <Section title="What we read from Strava">
         When you connect, we ask for read access to your profile (name, photo) and your activities

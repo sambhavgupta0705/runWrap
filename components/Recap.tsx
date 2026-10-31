@@ -21,8 +21,10 @@ const NAMES = ["total", "longest-run", "best-efforts", "routes", "calendar", "mo
 const CARD_W = 405;
 const CARD_H = 720;
 const PIXEL_RATIO = 1080 / CARD_W;
+const STORY_SCALE = 0.8;
 
-const frame = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
+// setTimeout, not requestAnimationFrame: rAF never fires while the tab is in the background.
+const frame = () => new Promise<void>((r) => setTimeout(r, 60));
 
 
 export function Recap() {
@@ -172,7 +174,7 @@ function Story({ data }: { data: RecapData }) {
         {!last ? (
           <SlideHeader data={data} page={`${i + 1} of ${SLIDES.length}`} actions={actions} />
         ) : (
-          <div className="absolute right-4 top-7 z-10 flex items-center">{actions}</div>
+          <div className="absolute right-3 top-5 z-10 flex items-center">{actions}</div>
         )}
 
         <AnimatePresence mode="wait">
@@ -199,11 +201,13 @@ function Story({ data }: { data: RecapData }) {
           <StaticContext.Provider value>
             <div ref={cardRef} style={{ width: CARD_W, height: CARD_H }}>
             <SlideFrame index={captureIdx} className="h-full w-full">
-              {captureIdx !== SLIDES.length - 1 && <SlideHeader data={data} className="top-6" />}
-              <div className="h-full pt-14">
-                <Capture data={data} />
+              {/* Instagram covers roughly the top and bottom 13% of a story, so content sits between them (scaled to fit) and the footer stays above the bottom bar. */}
+              <div className="absolute left-0 top-[94px] origin-top-left" style={{ width: CARD_W / STORY_SCALE, height: (CARD_H - 94 - 130) / STORY_SCALE, transform: `scale(${STORY_SCALE})` }}>
+                <div className="h-full [container-type:inline-size]">
+                  <Capture data={data} />
+                </div>
               </div>
-              <SlideFooter index={captureIdx} className="bottom-5" />
+              <SlideFooter index={captureIdx} className="bottom-[100px]" />
             </SlideFrame>
             </div>
           </StaticContext.Provider>
@@ -220,7 +224,7 @@ function IconButton({ label, onClick, disabled, children }: { label: string; onC
       title={label}
       disabled={disabled}
       onClick={onClick}
-      className="flex h-9 w-9 items-center justify-center rounded-full transition hover:bg-current/10 active:scale-95 disabled:opacity-40"
+      className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full transition hover:bg-current/10 active:scale-95 disabled:opacity-40"
     >
       <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
         {children}

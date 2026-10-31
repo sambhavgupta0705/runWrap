@@ -10,7 +10,7 @@ export function SlideHeader({ data, page, actions, className = "top-8" }: { data
       </div>
       <div className="flex items-center gap-1">
         {actions}
-        {page && <span className="tnum ml-1 text-sm opacity-70">{page}</span>}
+        {page && <span className="tnum ml-1 text-sm opacity-85">{page}</span>}
       </div>
     </header>
   );
